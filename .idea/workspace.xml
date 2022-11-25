@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="AoC_2022" targetName="Day21" />
+      <config projectName="AoC_2022" targetName="Day20" />
+      <config projectName="AoC_2022" targetName="Day25" />
+      <config projectName="AoC_2022" targetName="Day24" />
+      <config projectName="AoC_2022" targetName="Day23" />
+      <config projectName="AoC_2022" targetName="Day22" />
+      <config projectName="AoC_2022" targetName="Day4" />
+      <config projectName="AoC_2022" targetName="Day5" />
+      <config projectName="AoC_2022" targetName="Day6" />
+      <config projectName="AoC_2022" targetName="Day7" />
+      <config projectName="AoC_2022" targetName="Day8" />
+      <config projectName="AoC_2022" targetName="Day9" />
+      <config projectName="AoC_2022" targetName="Day10" />
+      <config projectName="AoC_2022" targetName="Day14" />
+      <config projectName="AoC_2022" targetName="Day1" />
+      <config projectName="AoC_2022" targetName="Day13" />
+      <config projectName="AoC_2022" targetName="Day2" />
+      <config projectName="AoC_2022" targetName="Day12" />
+      <config projectName="AoC_2022" targetName="Day3" />
+      <config projectName="AoC_2022" targetName="Day11" />
+      <config projectName="AoC_2022" targetName="Day18" />
+      <config projectName="AoC_2022" targetName="Day17" />
+      <config projectName="AoC_2022" targetName="Day16" />
+      <config projectName="AoC_2022" targetName="Day15" />
+      <config projectName="AoC_2022" targetName="Day19" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-G Ninja" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2a02d03c-57e0-43af-8f46-498b1d041f22" name="Changes" comment="* Finished Advent of Code. Merry Christmas" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="21ftyqKhpquUCoURbA0BLGetlt2" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Projects/AoC_2022/.idea/workspace.xml&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.build&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Projects\AoC_2022\lib" />
+      <recent name="C:\Projects\AoC_2022\include" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake Application.Day1 Sample First">
+    <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.Day1 Sample First" />
+      <item itemvalue="CMake Application.Day1 First" />
+      <item itemvalue="CMake Application.Day1 Sample Second" />
+      <item itemvalue="CMake Application.Day1 Second" />
+      <item itemvalue="CMake Application.Day2 Sample First" />
+      <item itemvalue="CMake Application.Day2 First" />
+      <item itemvalue="CMake Application.Day2 Sample Second" />
+      <item itemvalue="CMake Application.Day2 Second" />
+      <item itemvalue="CMake Application.Day3 Sample First" />
+      <item itemvalue="CMake Application.Day3 First" />
+      <item itemvalue="CMake Application.Day3 Sample Second" />
+      <item itemvalue="CMake Application.Day3 Second" />
+      <item itemvalue="CMake Application.Day4 Sample First" />
+      <item itemvalue="CMake Application.Day4 First" />
+      <item itemvalue="CMake Application.Day4 Sample Second" />
+      <item itemvalue="CMake Application.Day4 Second" />
+      <item itemvalue="CMake Application.Day5 Sample First" />
+      <item itemvalue="CMake Application.Day5 First" />
+      <item itemvalue="CMake Application.Day5 Sample Second" />
+      <item itemvalue="CMake Application.Day5 Second" />
+      <item itemvalue="CMake Application.Day6 Sample First" />
+      <item itemvalue="CMake Application.Day6 First" />
+      <item itemvalue="CMake Application.Day6 Sample Second" />
+      <item itemvalue="CMake Application.Day6 Second" />
+      <item itemvalue="CMake Application.Day7 Sample First" />
+      <item itemvalue="CMake Application.Day7 First" />
+      <item itemvalue="CMake Application.Day7 Sample Second" />
+      <item itemvalue="CMake Application.Day7 Second" />
+      <item itemvalue="CMake Application.Day8 Sample First" />
+      <item itemvalue="CMake Application.Day8 First" />
+      <item itemvalue="CMake Application.Day8 Sample Second" />
+      <item itemvalue="CMake Application.Day8 Second" />
+      <item itemvalue="CMake Application.Day9 Sample First" />
+      <item itemvalue="CMake Application.Day9 First" />
+      <item itemvalue="CMake Application.Day9 Sample Second" />
+      <item itemvalue="CMake Application.Day9 Second" />
+      <item itemvalue="CMake Application.Day10 Sample First" />
+      <item itemvalue="CMake Application.Day10 First" />
+      <item itemvalue="CMake Application.Day10 Sample Second" />
+      <item itemvalue="CMake Application.Day10 Second" />
+      <item itemvalue="CMake Application.Day11 Sample First" />
+      <item itemvalue="CMake Application.Day11 First" />
+      <item itemvalue="CMake Application.Day11 Sample Second" />
+      <item itemvalue="CMake Application.Day11 Second" />
+      <item itemvalue="CMake Application.Day12 Sample First" />
+      <item itemvalue="CMake Application.Day12 First" />
+      <item itemvalue="CMake Application.Day12 Sample Second" />
+      <item itemvalue="CMake Application.Day12 Second" />
+      <item itemvalue="CMake Application.Day13 Sample First" />
+      <item itemvalue="CMake Application.Day13 First" />
+      <item itemvalue="CMake Application.Day13 Sample Second" />
+      <item itemvalue="CMake Application.Day13 Second" />
+      <item itemvalue="CMake Application.Day14 Sample First" />
+      <item itemvalue="CMake Application.Day14 First" />
+      <item itemvalue="CMake Application.Day14 Sample Second" />
+      <item itemvalue="CMake Application.Day14 Second" />
+      <item itemvalue="CMake Application.Day15 Sample First" />
+      <item itemvalue="CMake Application.Day15 First" />
+      <item itemvalue="CMake Application.Day15 Sample Second" />
+      <item itemvalue="CMake Application.Day15 Second" />
+      <item itemvalue="CMake Application.Day16 Sample First" />
+      <item itemvalue="CMake Application.Day16 First" />
+      <item itemvalue="CMake Application.Day16 Sample Second" />
+      <item itemvalue="CMake Application.Day16 Second" />
+      <item itemvalue="CMake Application.Day17 Sample First" />
+      <item itemvalue="CMake Application.Day17 First" />
+      <item itemvalue="CMake Application.Day17 Sample Second" />
+      <item itemvalue="CMake Application.Day17 Second" />
+      <item itemvalue="CMake Application.Day18 Sample First" />
+      <item itemvalue="CMake Application.Day18 First" />
+      <item itemvalue="CMake Application.Day18 Sample Second" />
+      <item itemvalue="CMake Application.Day18 Second" />
+      <item itemvalue="CMake Application.Day19 Sample First" />
+      <item itemvalue="CMake Application.Day19 First" />
+      <item itemvalue="CMake Application.Day19 Sample Second" />
+      <item itemvalue="CMake Application.Day19 Second" />
+      <item itemvalue="CMake Application.Day20 Sample First" />
+      <item itemvalue="CMake Application.Day20 First" />
+      <item itemvalue="CMake Application.Day20 Sample Second" />
+      <item itemvalue="CMake Application.Day20 Second" />
+      <item itemvalue="CMake Application.Day21 Sample First" />
+      <item itemvalue="CMake Application.Day21 First" />
+      <item itemvalue="CMake Application.Day21 Sample Second" />
+      <item itemvalue="CMake Application.Day21 Second" />
+      <item itemvalue="CMake Application.Day22 Sample First" />
+      <item itemvalue="CMake Application.Day22 First" />
+      <item itemvalue="CMake Application.Day22 Sample Second" />
+      <item itemvalue="CMake Application.Day22 Second" />
+      <item itemvalue="CMake Application.Day23 Sample First" />
+      <item itemvalue="CMake Application.Day23 First" />
+      <item itemvalue="CMake Application.Day23 Sample Second" />
+      <item itemvalue="CMake Application.Day23 Second" />
+      <item itemvalue="CMake Application.Day24 Sample First" />
+      <item itemvalue="CMake Application.Day24 First" />
+      <item itemvalue="CMake Application.Day24 Sample Second" />
+      <item itemvalue="CMake Application.Day24 Second" />
+      <item itemvalue="CMake Application.Day25 Sample First" />
+      <item itemvalue="CMake Application.Day25 First" />
+      <item itemvalue="CMake Application.Day25 Sample Second" />
+      <item itemvalue="CMake Application.Day25 Second" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2a02d03c-57e0-43af-8f46-498b1d041f22" name="Changes" comment="" />
+      <created>1638344226969</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1638344226969</updated>
+      <workItem from="1638344230177" duration="1150000" />
+      <workItem from="1638365677665" duration="633000" />
+      <workItem from="1638393860864" duration="1044000" />
+      <workItem from="1638436360204" duration="1763000" />
+      <workItem from="1638550427794" duration="4387000" />
+      <workItem from="1638960875244" duration="18000" />
+      <workItem from="1639141346475" duration="305000" />
+      <workItem from="1639560478967" duration="964000" />
+      <workItem from="1639561500187" duration="211000" />
+      <workItem from="1639651755801" duration="7327000" />
+      <workItem from="1639786936240" duration="10790000" />
+      <workItem from="1639836368821" duration="1524000" />
+      <workItem from="1639933426482" duration="7685000" />
+      <workItem from="1639952037129" duration="247000" />
+      <workItem from="1639952363985" duration="2081000" />
+      <workItem from="1639987161273" duration="5036000" />
+      <workItem from="1640042038115" duration="108000" />
+      <workItem from="1640070705457" duration="2588000" />
+      <workItem from="1640073344136" duration="3838000" />
+      <workItem from="1640166919534" duration="5265000" />
+      <workItem from="1640172293250" duration="5645000" />
+      <workItem from="1640272241215" duration="8747000" />
+      <workItem from="1640298767469" duration="2711000" />
+      <workItem from="1640334688227" duration="11607000" />
+      <workItem from="1640420655382" duration="477000" />
+      <workItem from="1640421162207" duration="2598000" />
+      <workItem from="1640432113638" duration="1256000" />
+      <workItem from="1641837013647" duration="187000" />
+      <workItem from="1669383033032" duration="99000" />
+      <workItem from="1669389625955" duration="30000" />
+    </task>
+    <task id="LOCAL-00001" summary="* Initial Commit&#10;&#10;- Includes solutions for first three days">
+      <created>1638554835253</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1638554835253</updated>
+    </task>
+    <task id="LOCAL-00002" summary="* Finished solution for day 15 part 2">
+      <created>1639561674133</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1639561674133</updated>
+    </task>
+    <task id="LOCAL-00003" summary="* Finished solution for day 16 - Nasty little overflow buggers">
+      <created>1639658670087</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1639658670087</updated>
+    </task>
+    <task id="LOCAL-00004" summary="* Finished Day 18 challenges - Nasty">
+      <created>1639824935803</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1639824935803</updated>
+    </task>
+    <task id="LOCAL-00005" summary="* Finished Day 17">
+      <created>1639839209301</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1639839209301</updated>
+    </task>
+    <task id="LOCAL-00006" summary="* Finished Day 18&#10;* Replaced CRLF with LF in all files">
+      <created>1639953831778</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1639953831778</updated>
+    </task>
+    <task id="LOCAL-00007" summary="* Finished Day 20">
+      <created>1639995768579</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1639995768579</updated>
+    </task>
+    <task id="LOCAL-00008" summary="* Finished Day 21">
+      <created>1640079439042</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1640079439042</updated>
+    </task>
+    <task id="LOCAL-00009" summary="* Finished Day 22">
+      <created>1640192600684</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1640192600684</updated>
+    </task>
+    <task id="LOCAL-00010" summary="* Finished Advent of Code. Merry Christmas">
+      <created>1640470906951</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1640470906951</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="* Initial Commit&#10;&#10;- Includes solutions for first three days" />
+    <MESSAGE value="* Finished solution for day 15 part 2" />
+    <MESSAGE value="* Finished solution for day 16 - Nasty little overflow buggers" />
+    <MESSAGE value="* Finished Day 18 challenges - Nasty" />
+    <MESSAGE value="* Finished Day 17" />
+    <MESSAGE value="* Finished Day 18&#10;* Replaced CRLF with LF in all files" />
+    <MESSAGE value="* Finished Day 20" />
+    <MESSAGE value="* Finished Day 21" />
+    <MESSAGE value="* Finished Day 22" />
+    <MESSAGE value="* Finished Advent of Code. Merry Christmas" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Finished Advent of Code. Merry Christmas" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/lib/Day22/main.cpp</url>
+          <line>436</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/lib/Day22/main.cpp</url>
+          <line>100</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/lib/Day23/main.cpp</url>
+          <line>386</line>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
