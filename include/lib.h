@@ -176,18 +176,169 @@ T& operator-(T &Instance){
 }
 
 //I/O
-template <typename ...Args>
-#if __cplusplus>=202002L
-requires (sizeof...(Args)>0)
+namespace IO {
+    template<typename ...Args>
+#if __cplusplus >= 202002L
+    requires (sizeof...(Args) > 0)
 #endif
-void read(Args&&... args) {
-    (cin >> ... >> args);
-}
+    void read(Args &&... args) {
+        (cin >> ... >> args);
+    }
 
-template <typename ...Args>
-void print(Args&&... args){
-    ((cout << args << ' '), ...);
-    cout << endl;
+    template<typename ...Args>
+    void print(Args &&... args) {
+        ((cout << args << ' '), ...);
+        cout << endl;
+    }
+#if 0
+    template <typename T>
+    class Generator
+    : public ranges::view_base
+    {
+        class Promise
+        {
+        public:
+            using value_type = T;
+
+            Promise() = default;
+            std::suspend_always initial_suspend() { return {}; }
+            std::suspend_always final_suspend() noexcept { return {}; }
+            void unhandled_exception() {
+                std::rethrow_exception(std::move(std::current_exception()));
+            }
+
+            std::suspend_always yield_value(T value) {
+                this->value = std::move(value);
+                return {};
+            }
+
+            /*void return_value(T value){
+                this->value = move(value);
+                _finished = true;
+            }*/
+
+            void return_void() {
+                _finished = true;
+            }
+
+            inline Generator get_return_object();
+
+            value_type get_value() {
+                return std::move(value);
+            }
+
+            bool finished() {
+                return _finished;
+            }
+
+        private:
+            value_type value{};
+            bool _finished = false;
+        };
+
+    public:
+        using value_type = T;
+        using promise_type = Promise;
+
+        explicit Generator(std::coroutine_handle<Promise> handle)
+                : handle (handle)
+        {}
+
+        Generator(const Generator&) = default;
+
+        ~Generator() {
+            if (handle) { handle.destroy(); }
+        }
+
+        typename Promise::value_type next() {
+            if (handle) {
+                handle.resume();
+                return handle.promise().get_value();
+            }
+            else {
+                return {};
+            }
+        }
+
+        struct end_iterator {};
+
+        class iterator
+        : public forward_iterator_tag
+        {
+        public:
+            using value_type = typename Promise::value_type;
+            using difference_type =  std::ptrdiff_t;
+            using iterator_category = std::input_iterator_tag;
+
+            iterator() = default;
+            iterator(const Generator& generator) : generator(&generator)
+            {}
+
+            value_type operator*() const {
+                if (generator) {
+                    return generator->handle.promise().get_value();
+                }
+                return {};
+            }
+
+            value_type operator->() const {
+                if (generator) {
+                    return generator->handle.promise().get_value();
+                }
+                return {};
+            }
+
+            iterator& operator++() {
+                if (generator && generator->handle) {
+                    generator->handle.resume();
+                }
+                return *this;
+            }
+
+            iterator& operator++(int) {
+                if (generator && generator->handle) {
+                    generator->handle.resume();
+                }
+                return *this;
+            }
+
+            bool operator== (const end_iterator&) const {
+                return generator ? generator->handle.promise().finished() : true;
+            }
+
+        private:
+            const Generator* generator{};
+        };
+
+        [[nodiscard]] iterator begin() const {
+            iterator it{*this};
+            return ++it;
+        }
+
+        const end_iterator end() const {
+            return end_sentinel;
+        }
+
+    private:
+        end_iterator end_sentinel{};
+        std::coroutine_handle<Promise> handle;
+    };
+
+
+    template <typename T>
+    inline Generator<T> Generator<T>::Promise::get_return_object()
+    {
+        return Generator{ std::coroutine_handle<Promise>::from_promise(*this) };
+    }
+
+    Generator<string> from_cin(){
+        string s;
+        while(getline(cin,s)){
+            co_yield s;
+        }
+        co_return;
+    }
+#endif
 }
 
 namespace data_structures {

@@ -2,38 +2,38 @@
 #include <sstream>
 #include "lib.h"
 using namespace std;
-enum PlayChoice{
+enum Move {
     Rock,
     Paper,
     Scissors
 };
 
-map<PlayChoice,int> scores = {{PlayChoice::Rock,1},{PlayChoice::Paper,2},{PlayChoice::Scissors,3}};
+map<Move,int> scores = {{Move::Rock, 1}, {Move::Paper, 2}, {Move::Scissors, 3}};
 
-map<char,PlayChoice> choices = {{'A',PlayChoice::Rock},{'B',PlayChoice::Paper},{'C',PlayChoice::Scissors}
-,{'X',PlayChoice::Rock},{'Y',PlayChoice::Paper},{'Z',PlayChoice::Scissors}};
+map<char,Move> choices = {{'A', Move::Rock}, {'B', Move::Paper}, {'C', Move::Scissors}
+,                         {'X', Move::Rock}, {'Y', Move::Paper}, {'Z', Move::Scissors}};
 
-int64_t get_outcome(PlayChoice opponent, PlayChoice me){
+int64_t get_outcome(Move opponent, Move me){
     if (me==opponent){
         return 3;
     }
 
-    if(opponent==PlayChoice::Rock){
-        if(me==PlayChoice::Paper){
+    if(opponent == Move::Rock){
+        if(me == Move::Paper){
             return 6;
         }
         return 0;
     }
 
-    if(opponent==PlayChoice::Paper){
-        if(me==PlayChoice::Scissors){
+    if(opponent == Move::Paper){
+        if(me == Move::Scissors){
             return 6;
         }
         return 0;
     }
 
-    if(opponent==PlayChoice::Scissors){
-        if(me==PlayChoice::Rock){
+    if(opponent == Move::Scissors){
+        if(me == Move::Rock){
             return 6;
         }
         return 0;
@@ -58,13 +58,13 @@ void part1(){
 void part2(){
     int64_t total_score = 0;
 
-    map<PlayChoice,PlayChoice> winsAgainst{{PlayChoice::Rock,PlayChoice::Paper}
-            ,{PlayChoice::Paper,PlayChoice::Scissors}
-            ,{PlayChoice::Scissors,PlayChoice::Rock}};
+    map<Move,Move> winsAgainst{{Move::Rock,     Move::Paper}
+            ,                  {Move::Paper,    Move::Scissors}
+            ,                  {Move::Scissors, Move::Rock}};
 
-    map<PlayChoice,PlayChoice> losesAgainst{{PlayChoice::Rock,PlayChoice::Scissors}
-            ,{PlayChoice::Paper,PlayChoice::Rock}
-            ,{PlayChoice::Scissors,PlayChoice::Paper}};
+    map<Move,Move> losesAgainst{{Move::Rock,     Move::Scissors}
+            ,                   {Move::Paper,    Move::Rock}
+            ,                   {Move::Scissors, Move::Paper}};
 
     for(string line;getline(cin,line);){
         stringstream ss(line);
@@ -93,7 +93,7 @@ void part2(){
 
 int main(int argc, char* argv[]){
     if(std::string(argv[1])=="--one"){
-        part1();
+        part1ButCool();
     }else if(std::string(argv[1])=="--two"){
         part2();
     } else{
