@@ -1,9 +1,40 @@
 #include "lib.h"
 
 void part1(){
+
+    for(string line;getline(cin,line);){
+        for(size_t idx = 4;idx<line.length();++idx){
+            set<char> chars{};
+
+            for(size_t idx2 = idx-4;idx2<idx;++idx2){
+                chars += line[idx2];
+            }
+
+            if(chars.size()==4){
+                cout << idx << endl;
+                break;
+            }
+            chars.clear();
+        }
+    }
 }
 
 void part2(){
+    for(string line;getline(cin,line);){
+        for(size_t idx = 14;idx<line.length();++idx){
+            set<char> chars{};
+
+            for(size_t idx2 = idx-14;idx2<idx;++idx2){
+                chars += line[idx2];
+            }
+
+            if(chars.size()==14){
+                cout << idx << endl;
+                break;
+            }
+            chars.clear();
+        }
+    }
 }
 
 int main(int argc, char* argv[]){
