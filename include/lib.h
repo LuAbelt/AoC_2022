@@ -6,6 +6,8 @@
 #define ADVENTOFCODE2022_LIB_H
 #include <bits/stdc++.h>
 
+#include <utility>
+
 //Definitions
 #define impossible "impossible"
 
@@ -478,6 +480,60 @@ namespace IO {
 }
 
 namespace data_structures {
+
+
+    template<typename ValueType=i64>
+    class Tree {
+        using MapTy = map<string,shared_ptr<Tree>>;
+        ValueType _value;
+        string _name;
+        MapTy _children;
+        shared_ptr<Tree> _parent;
+    public:
+        explicit Tree(string name, ValueType value, shared_ptr<Tree> parent = nullptr)
+        :_value(value)
+        ,_name(std::move(name))
+        ,_parent(parent)
+        {}
+
+        Tree(Tree&) = default;
+        Tree(Tree &&) = default;
+
+        shared_ptr<Tree> parent() const {
+            return _parent;
+        }
+
+        [[nodiscard]] string name() const{
+            return name;
+        }
+
+        [[nodiscard]] ValueType value() const {
+            return _value;
+        }
+
+        const MapTy &getChildren() const {
+            return _children;
+        }
+
+        bool hasChild(const string &name) const {
+            return _children.find(name)!=_children.end();
+        }
+
+        void addChild(shared_ptr<Tree<>> child){
+            _children[child->_name] = child;
+        }
+
+        template<typename InitTy = ValueType, typename BinaryOp = std::plus<InitTy>>
+        InitTy evaluate(BinaryOp Op = std::plus<InitTy>{}, InitTy Init = ValueType{}){
+            auto result = Init;
+
+            for(const auto& child : _children) {
+                result = Op(result,child.second->evaluate(Op,Init));
+            }
+
+            return Op(result, _value);
+        }
+    };
 
     class UnionFind{
     private:
