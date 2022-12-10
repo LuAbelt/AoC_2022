@@ -334,7 +334,6 @@ namespace IO {
     }
 
 
-#else
     template <typename T>
     class Generator
     : public ranges::view_base
@@ -469,7 +468,7 @@ namespace IO {
     {
         return Generator{ std::coroutine_handle<Promise>::from_promise(*this) };
     }
-#endif
+f
     Generator<string> from_cin(){
         string s;
         while(getline(cin,s)){
@@ -477,6 +476,8 @@ namespace IO {
         }
         co_return;
     }
+#endif
+
 }
 
 namespace data_structures {
@@ -832,6 +833,8 @@ namespace transform {
 namespace geometry {
     struct Point{
         int x,y;
+
+	auto operator<=>(const Point&) const = default;
     };
 
     struct Line{
