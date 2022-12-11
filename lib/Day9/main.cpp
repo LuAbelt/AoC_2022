@@ -1,5 +1,6 @@
 #include "lib.h"
 
+
 void part1(){
 	using geometry::Point;
 	set<Point> positions{Point{0,0}};

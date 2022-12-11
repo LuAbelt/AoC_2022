@@ -6,6 +6,17 @@
 #define ADVENTOFCODE2022_LIB_H
 #include <bits/stdc++.h>
 
+#include <iostream>
+#include <map>
+#include <vector>
+#include <compare>
+#include <queue>
+#include <stack>
+#include <queue>
+#include <deque>
+#include <set>
+#include <algorithm>
+
 #include <utility>
 
 //Definitions
