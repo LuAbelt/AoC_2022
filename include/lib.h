@@ -4,8 +4,8 @@
 
 #ifndef ADVENTOFCODE2022_LIB_H
 #define ADVENTOFCODE2022_LIB_H
-#include <bits/stdc++.h>
 
+#if __APPLE__
 #include <iostream>
 #include <map>
 #include <vector>
@@ -16,6 +16,9 @@
 #include <deque>
 #include <set>
 #include <algorithm>
+#endif
+
+#include <bits/stdc++.h>
 
 #include <utility>
 
@@ -735,7 +738,17 @@ namespace transform {
         }
 
         auto operator<=>(Coord const & Other) const {
+#if __APPLE__
+            for(st idx = 0; idx < Dimensions;++idx){
+                auto res = _coords[idx] <=> Other._coords[idx];
+                if(res!=0) {
+                    return res;
+                }
+            }
+            return decltype(_coords[0]<=>Other._coords[0])::equivalent;
+#else
             return _coords <=> Other._coords;
+#endif
         }
 
         Coord & operator+=(Coord const & Other) {
