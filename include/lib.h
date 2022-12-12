@@ -16,6 +16,7 @@
 #include <deque>
 #include <set>
 #include <algorithm>
+#include <sstream>
 #endif
 
 #include <bits/stdc++.h>
@@ -492,6 +493,15 @@ f
     }
 #endif
 
+    V<string> fromCin() {
+        V<string> result;
+
+        for(string line;getline(cin,line);){
+            result.emplace_back(line);
+        }
+
+        return result;
+    }
 }
 
 namespace data_structures {
@@ -1760,6 +1770,76 @@ namespace graphs {
         return dist;
     }
 
+    vector<i64> dijkstra_unit(Adj &adj, i64 start){
+        vector<i64> dist(adj.size(), maxval<i64>());
+        dist[start] = 0;
+
+        priority_queue<i64pair,vector<i64pair>,greater<>> frontier;
+
+        frontier.push({0, start});
+
+        while (!frontier.empty()){
+            auto front = frontier.top();
+            frontier.pop();
+
+            i64 cur_d = front.first;
+            i64 node = front.second;
+
+            if(cur_d > dist[node]){
+                continue;
+            }
+
+            for ( auto edge : adj[node]) {
+                i64 target = edge;
+                i64 weight = 1;
+
+                if(dist[node] + weight < dist[target]){
+                    //if(target==targetId)IO::print("Updated target dist to ", dist[node] + weight, "from node",node);
+                    dist[target] = dist[node] + weight;
+                    frontier.push({dist[target], target});
+                }
+            }
+        }
+
+        return dist;
+    }
+
+    auto dijkstra(V<V<i64pair>> &adj, i64 start){
+        vector<i64> dist(adj.size(), maxval<i64>());
+        dist[start] = 0;
+        V<i64> parent(adj.size(),0);
+
+        priority_queue<i64pair,vector<i64pair>,greater<>> frontier;
+
+        frontier.push({0, start});
+
+        while (!frontier.empty()){
+            auto front = frontier.top();
+            frontier.pop();
+
+            i64 cur_d = front.first;
+            i64 node = front.second;
+
+            if(cur_d > dist[node]){
+                continue;
+            }
+
+            for ( auto edge : adj[node]) {
+                i64 target = edge.first;
+                i64 weight = edge.second;
+
+                if(dist[node] + weight < dist[target]){
+                    //if(target==targetId)IO::print("Updated target dist to ", dist[node] + weight, "from node",node);
+                    dist[target] = dist[node] + weight;
+                    parent[target] = node;
+                    frontier.push({dist[target], target});
+                }
+            }
+        }
+
+        return make_tuple(dist,parent);
+    }
+
 /**
  * Calculates a minimum spanning tree
  * @param nNodes Number of nodes in the graph
@@ -2192,8 +2272,6 @@ namespace modulus_calc {
 
 }
 
-
-
 namespace util {
     using namespace std;
     string hexToBinary(const string &input){
@@ -2253,6 +2331,59 @@ namespace util {
                     cout << "Unexpected character! "<<character<<endl;
             }
         }
+        return result;
+    }
+
+    void strip(string &s, char stripChar = ' ') {
+        st begin = s.find_first_not_of(stripChar);
+        st end = s.find_last_not_of(stripChar);
+
+        s = s.substr(begin,end-begin);
+    }
+
+    V<string> split(const string &input, string separator = " ", bool strip = true) {
+        assert(separator.length()>0 && "util::split called with an empty separator string");
+
+        V<string> result;
+        const st sepLength = separator.length();
+
+        st begin = 0;
+        st end = input.find(separator);
+
+        while(begin!=string::npos){
+            auto element = input.substr(begin, end-begin);
+
+            if(strip){
+                util::strip(element);
+            }
+
+            result.emplace_back();
+
+            if( end != string::npos) {
+                begin = end+sepLength;
+            }
+
+            end = input.find(separator,end+sepLength);
+
+        }
+
+        return result;
+    }
+
+    template <typename T>
+    V<T> fromString(const V<string> &input) {
+        V<T> result;
+        result.reserve(input.size());
+
+        for( const auto& line : input ){
+            stringstream ss{line};
+
+            T element;
+            ss >> element;
+
+            result.emplace_back(element);
+        }
+
         return result;
     }
 }
