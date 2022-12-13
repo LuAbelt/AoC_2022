@@ -95,57 +95,6 @@ public:
 
         return contents.size() <=> Other.contents.size();
     }
-
-    auto compareTo(const Packet& Other, st indent = 0) const{
-#if 0
-        string prefix ="";
-        for(st i=0;i<indent;++i){
-            prefix+="\t";
-        }
-        cout << prefix;
-        cout << "- Compare ";
-        printflat();
-        cout << " vs ";
-        Other.printflat();
-        cout << endl;
-#endif
-        if(value.has_value() && Other.value.has_value()){
-            return value.value() <=> Other.value.value();
-        }
-
-        if(value.has_value()){
-            if(Other.contents.size()>0){
-                auto cmpRes = this->compareTo(*Other.contents[0],indent+1);
-                if(cmpRes == 0 && Other.contents.size()>1) {
-                    return strong_ordering::less;
-                }
-                return cmpRes;
-            } else {
-                return strong_ordering::greater;
-            }
-        }
-
-        if(Other.value.has_value()){
-            if(contents.size()>0){
-                auto cmpRes = contents[0]->compareTo(Other,indent+1);
-                if(cmpRes == 0 && contents.size()>1){
-                    return strong_ordering::greater;
-                }
-                return cmpRes;
-            } else {
-                return strong_ordering::less;
-            }
-        }
-
-        for(st idx = 0;idx<contents.size() && idx<Other.contents.size();++idx){
-            auto compRes = contents[idx]->compareTo(*Other.contents[idx],indent+1);
-            if(compRes!=0) {
-                return compRes;
-            }
-        }
-
-        return contents.size() <=> Other.contents.size();
-    }
 };
 
 shared_ptr<Packet> parsePacket(string &input, st &idx) {
@@ -182,10 +131,8 @@ void part1(){
         string line1 = lines[idx];
         string line2 = lines[idx+1];
 
-        st i = 1;
-        auto p1 = parsePacket(line1,i);
-        i=1;
-        auto p2 = parsePacket(line2,i);
+        auto p1 = data_structures::parseRecList<i64>(line1);
+        auto p2 = data_structures::parseRecList<i64>(line2);
 
         auto cmpRes = *p1 <=> *p2;
 
@@ -207,21 +154,23 @@ void part2(){
     i64 total = 0;
     auto lines = IO::fromCin();
 
-    V<shared_ptr<Packet>> packages;
+    using ListTy = data_structures::RecursiveList<i64>;
+    using namespace data_structures;
+    V<shared_ptr<ListTy>> packages;
 
     packages.reserve(lines.size()+2);
 
-    packages.emplace_back(parsePacket(string("[[2]]")));
-    packages.emplace_back(parsePacket(string("[[6]]")));
+    packages.emplace_back(parseRecList<i64>(string("[[2]]")));
+    packages.emplace_back(parseRecList<i64>(string("[[6]]")));
     for(st idx = 0;idx<lines.size();idx+=3){
         string line1 = lines[idx];
         string line2 = lines[idx+1];
 
-        packages += parsePacket(line1);
-        packages += parsePacket(line2);
+        packages += parseRecList(line1);
+        packages += parseRecList(line2);
     }
 
-    sort(packages.begin(), packages.end(),[](shared_ptr<Packet> lhs, shared_ptr<Packet> rhs){
+    sort(packages.begin(), packages.end(),[](auto lhs, auto rhs){
         return (*lhs <=> *rhs)<0;
     });
 

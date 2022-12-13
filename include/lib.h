@@ -192,6 +192,125 @@ T& operator-(T &Instance){
     return Instance;
 }
 
+namespace util {
+    using namespace std;
+    string hexToBinary(const string &input){
+        string result;
+
+        for (auto character : input) {
+            switch (character) {
+                case '0':
+                    result.append("0000");
+                    break;
+                case '1':
+                    result.append("0001");
+                    break;
+                case '2':
+                    result.append("0010");
+                    break;
+                case '3':
+                    result.append("0011");
+                    break;
+                case '4':
+                    result.append("0100");
+                    break;
+                case '5':
+                    result.append("0101");
+                    break;
+                case '6':
+                    result.append("0110");
+                    break;
+                case '7':
+                    result.append("0111");
+                    break;
+                case '8':
+                    result.append("1000");
+                    break;
+                case '9':
+                    result.append("1001");
+                    break;
+                case 'A':
+                    result.append("1010");
+                    break;
+                case 'B':
+                    result.append("1011");
+                    break;
+                case 'C':
+                    result.append("1100");
+                    break;
+                case 'D':
+                    result.append("1101");
+                    break;
+                case 'E':
+                    result.append("1110");
+                    break;
+                case 'F':
+                    result.append("1111");
+                    break;
+                default:
+                    cout << "Unexpected character! "<<character<<endl;
+            }
+        }
+        return result;
+    }
+
+    void strip(string &s, char stripChar = ' ') {
+        st begin = s.find_first_not_of(stripChar);
+        st end = s.find_last_not_of(stripChar);
+
+        s = s.substr(begin,end-begin);
+    }
+
+    V<string> split(const string &input, string separator = " ", bool strip = true) {
+        assert(separator.length()>0 && "util::split called with an empty separator string");
+
+        V<string> result;
+        const st sepLength = separator.length();
+
+        st begin = 0;
+        st end = input.find(separator);
+
+        while(begin!=string::npos){
+            auto element = input.substr(begin, end-begin);
+
+            if(strip){
+                util::strip(element);
+            }
+
+            result.emplace_back();
+
+            if( end != string::npos) {
+                begin = end+sepLength;
+            }
+
+            end = input.find(separator,end+sepLength);
+
+        }
+
+        return result;
+    }
+
+    template <typename T>
+    V<T> fromString(const V<string> &input) {
+        V<T> result;
+        result.reserve(input.size());
+
+        for( const auto& line : input ){
+            stringstream ss{line};
+
+            T element;
+            ss >> element;
+
+            result.emplace_back(element);
+        }
+
+        return result;
+    }
+
+    template<class... Ts>
+    struct Visitor : Ts... {using Ts::operator()...;};
+}
+
 //I/O
 namespace IO {
     template<typename ...Args>
@@ -506,6 +625,176 @@ f
 
 namespace data_structures {
 
+    template <typename ValueTy>
+    class RecursiveList {
+        using VectorTy = V<shared_ptr<RecursiveList>>;
+
+        variant<ValueTy,VectorTy> _data;
+    public:
+        explicit RecursiveList(ValueTy &data)
+                :_data(data)
+        {}
+
+        explicit RecursiveList(VectorTy &data)
+                :_data(data)
+        {}
+
+        void print(st indent = 0) const {
+
+            string prefix;
+            for(st i=0;i<indent;++i){
+                prefix+="\t";
+            }
+            std::visit(util::Visitor{
+                    [&prefix, this](ValueTy &&arg) { cout << prefix << arg;},
+                    [&prefix, &indent, this](VectorTy &&contents) {
+                        cout << prefix << "[" << endl;
+                        for(auto& item : contents){
+                            item->print(indent+1);
+                            cout << "," <<endl;
+                        }
+                        cout << prefix << "]";
+
+                        if(indent==0){
+                            cout << endl;
+                        }
+                    }
+            }, _data);
+        }
+
+        [[nodiscard]] string toString() const {
+            string r;
+
+            if(_data.index()==0){
+                auto value = get<ValueTy>(_data);
+                stringstream ss;
+                ss << value;
+                r = ss.str();
+            } else {
+                auto contents = get<VectorTy>(_data);
+
+
+                r += "[";
+                for(auto& item : contents){
+                    r+=item->toString();
+                    if(item !=contents.back() ) r+= ",";
+                }
+                r+= "]";
+            }
+#if 0
+            r = std::visit<string>(util::Visitor{
+                [this](ValueTy &&value){
+                    stringstream ss;
+                    ss << value;
+                    string res = ss.str();
+                    return res;
+                },
+                [this](VectorTy &&contents){
+                    string res;
+                    res += "[";
+                    for(auto& item : contents){
+                        res+=item->toString();
+                        if(item !=contents.back() ) res+= ",";
+                    }
+                    res+= "]";
+
+                    return res;
+                }
+            }, _data);
+#endif
+
+            return r;
+        }
+
+        void printFlat(st indent = 0) const {
+            cout << toString() << endl;
+        }
+
+        auto operator<=>(RecursiveList<ValueTy> const& Other) const {
+            if( _data.index() == 0 && Other._data.index()==0 ){
+                return get<ValueTy>(_data) <=> get<ValueTy>(Other._data);
+            }
+
+            if(_data.index()==0){
+                auto &contents = get<VectorTy>(Other._data);
+                if(contents.size()>0){
+                    auto cmpRes = *this <=> *contents[0];
+                    if(cmpRes == 0 && contents.size()>1) {
+                        return strong_ordering::less;
+                    }
+                    return cmpRes;
+                } else {
+                    return strong_ordering::greater;
+                }
+            }
+
+            if( Other._data.index() == 0 ){
+                auto& contents = get<VectorTy>(_data);
+                if(contents.size()>0){
+                    auto cmpRes = *contents[0] <=> Other;
+                    if(cmpRes == 0 && contents.size()>1){
+                        return strong_ordering::greater;
+                    }
+                    return cmpRes;
+                } else {
+                    return strong_ordering::less;
+                }
+            }
+
+            auto& contents = get<VectorTy>(_data);
+            auto& otherContents = get<VectorTy>(Other._data);
+            for(st idx = 0;idx<contents.size() && idx<otherContents.size();++idx){
+                auto compRes = *contents[idx] <=> *otherContents[idx];
+                if(compRes!=0) {
+                    return compRes;
+                }
+            }
+
+            return contents.size() <=> otherContents.size();
+        }
+    };
+
+    template<typename ValueTy, char ListBegin = '[', char ListEnd = ']', char Delimiter = ','>
+    shared_ptr<RecursiveList<ValueTy>> parseRecList(string &input, st &idx) {
+        using ListTy = RecursiveList<ValueTy>;
+        using PtrTy = shared_ptr<ListTy>;
+        using VecTy = V<PtrTy>;
+        VecTy contents;
+        while(idx < input.size() && input[idx]!=ListEnd){
+            //TODO: Generalize value parsing?
+            if(isdigit(input[idx])) {
+                i64 value = 0;
+                while(isdigit(input[idx])){
+                    value *= 10;
+                    value += input[idx]-'0';
+                    idx++;
+                }
+                contents.emplace_back(make_shared<ListTy>(value));
+            }
+
+            if(input[idx]==ListBegin){
+                idx+=1;
+                contents.emplace_back(parseRecList<ValueTy>(input,idx));
+            }
+
+            if(input[idx]==Delimiter) {
+                ++idx;
+            }
+
+            /*
+            ValueTy value = parseValue(input,idx);
+            contents.emplace_back(make_shared<ListTy>(value));*/
+        }
+        ++idx;
+
+        return make_shared<ListTy>(contents);
+    }
+
+    template<typename ValueTy = i64, char ListBegin = '[', char ListEnd = ']', char Delimiter = ','>
+    shared_ptr<RecursiveList<ValueTy>> parseRecList(string input) {
+        st idx = 1;
+        return parseRecList<ValueTy,ListBegin,ListEnd,Delimiter>(input,idx);
+    }
 
     template<typename ValueType=i64>
     class Tree {
@@ -2272,121 +2561,6 @@ namespace modulus_calc {
 
 }
 
-namespace util {
-    using namespace std;
-    string hexToBinary(const string &input){
-        string result;
-
-        for (auto character : input) {
-            switch (character) {
-                case '0':
-                    result.append("0000");
-                    break;
-                case '1':
-                    result.append("0001");
-                    break;
-                case '2':
-                    result.append("0010");
-                    break;
-                case '3':
-                    result.append("0011");
-                    break;
-                case '4':
-                    result.append("0100");
-                    break;
-                case '5':
-                    result.append("0101");
-                    break;
-                case '6':
-                    result.append("0110");
-                    break;
-                case '7':
-                    result.append("0111");
-                    break;
-                case '8':
-                    result.append("1000");
-                    break;
-                case '9':
-                    result.append("1001");
-                    break;
-                case 'A':
-                    result.append("1010");
-                    break;
-                case 'B':
-                    result.append("1011");
-                    break;
-                case 'C':
-                    result.append("1100");
-                    break;
-                case 'D':
-                    result.append("1101");
-                    break;
-                case 'E':
-                    result.append("1110");
-                    break;
-                case 'F':
-                    result.append("1111");
-                    break;
-                default:
-                    cout << "Unexpected character! "<<character<<endl;
-            }
-        }
-        return result;
-    }
-
-    void strip(string &s, char stripChar = ' ') {
-        st begin = s.find_first_not_of(stripChar);
-        st end = s.find_last_not_of(stripChar);
-
-        s = s.substr(begin,end-begin);
-    }
-
-    V<string> split(const string &input, string separator = " ", bool strip = true) {
-        assert(separator.length()>0 && "util::split called with an empty separator string");
-
-        V<string> result;
-        const st sepLength = separator.length();
-
-        st begin = 0;
-        st end = input.find(separator);
-
-        while(begin!=string::npos){
-            auto element = input.substr(begin, end-begin);
-
-            if(strip){
-                util::strip(element);
-            }
-
-            result.emplace_back();
-
-            if( end != string::npos) {
-                begin = end+sepLength;
-            }
-
-            end = input.find(separator,end+sepLength);
-
-        }
-
-        return result;
-    }
-
-    template <typename T>
-    V<T> fromString(const V<string> &input) {
-        V<T> result;
-        result.reserve(input.size());
-
-        for( const auto& line : input ){
-            stringstream ss{line};
-
-            T element;
-            ss >> element;
-
-            result.emplace_back(element);
-        }
-
-        return result;
-    }
-}
 
 namespace PacketParser {
     //AoC 2021 Day 16
