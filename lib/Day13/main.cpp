@@ -1,19 +1,16 @@
 #include "lib.h"
 
 class Packet {
-    st size;
     V<shared_ptr<Packet>> contents;
     std::optional<i64> value;
 
 public:
     Packet(i64 val)
     :value(val)
-    ,size(1)
     {}
 
     Packet(V<shared_ptr<Packet>> &content)
     :contents(content)
-    ,size(content.size())
     {}
 
     void print(st indent = 0) const {
@@ -189,18 +186,6 @@ void part1(){
         auto p1 = parsePacket(line1,i);
         i=1;
         auto p2 = parsePacket(line2,i);
-
-        if(line1 !=p1->toString()){
-            IO::print("Parsed wrong!");
-            IO::print("Line: ",line1);
-            IO::print("Packet: ",p1->toString());
-        }
-
-        if(line2 !=p2->toString()){
-            IO::print("Parsed wrong!");
-            IO::print("Line: ",line2);
-            IO::print("Packet: ",p2->toString());
-        }
 
         auto cmpRes = *p1 <=> *p2;
 
