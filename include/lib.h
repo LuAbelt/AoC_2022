@@ -659,8 +659,8 @@ namespace data_structures {
                 prefix+="\t";
             }
             std::visit(util::Visitor{
-                    [&prefix, this](ValueTy &&arg) { cout << prefix << arg;},
-                    [&prefix, &indent, this](VectorTy &&contents) {
+                    [&prefix](ValueTy arg) -> void { cout << prefix << arg;},
+                    [&prefix, &indent](VectorTy contents) -> void {
                         cout << prefix << "[" << endl;
                         for(auto& item : contents){
                             item->print(indent+1);
@@ -678,31 +678,14 @@ namespace data_structures {
         [[nodiscard]] string toString() const {
             string r;
 
-            if(_data.index()==0){
-                auto value = get<ValueTy>(_data);
-                stringstream ss;
-                ss << value;
-                r = ss.str();
-            } else {
-                auto contents = get<VectorTy>(_data);
-
-
-                r += "[";
-                for(auto& item : contents){
-                    r+=item->toString();
-                    if(item !=contents.back() ) r+= ",";
-                }
-                r+= "]";
-            }
-#if 0
             r = std::visit<string>(util::Visitor{
-                [this](ValueTy &&value){
+                [this](ValueTy value){
                     stringstream ss;
                     ss << value;
                     string res = ss.str();
                     return res;
                 },
-                [this](VectorTy &&contents){
+                [this](VectorTy contents){
                     string res;
                     res += "[";
                     for(auto& item : contents){
@@ -714,7 +697,6 @@ namespace data_structures {
                     return res;
                 }
             }, _data);
-#endif
 
             return r;
         }
@@ -723,47 +705,45 @@ namespace data_structures {
             cout << toString() << endl;
         }
 
-        auto operator<=>(RecursiveList<ValueTy> const& Other) const {
-            if( _data.index() == 0 && Other._data.index()==0 ){
-                return get<ValueTy>(_data) <=> get<ValueTy>(Other._data);
-            }
+        strong_ordering operator<=>(RecursiveList<ValueTy> const& Other) const {
+            return std::visit(
+                    util::Visitor{
+                        [](ValueTy left, ValueTy right){ return left <=> right; },
+                        [this](ValueTy, VectorTy right){
+                            if(right.size()>0){
+                                auto cmpRes = *this <=> *right[0];
+                                if(cmpRes == 0 && right.size()>1) {
+                                    return strong_ordering::less;
+                                }
+                                return cmpRes;
+                            } else {
+                                return strong_ordering::greater;
+                            }
+                        },
+                        [Other](VectorTy left, ValueTy){
+                            if(left.size()>0){
+                                auto cmpRes = *left[0] <=> Other;
+                                if(cmpRes == 0 && left.size()>1){
+                                    return strong_ordering::greater;
+                                }
+                                return cmpRes;
+                            } else {
+                                return strong_ordering::less;
+                            }
+                        },
+                        [](VectorTy left, VectorTy right){
+                            for(st idx = 0;idx<left.size() && idx<right.size();++idx){
+                                auto compRes = *left[idx] <=> *right[idx];
+                                if(compRes!=0) {
+                                    return compRes;
+                                }
+                            }
 
-            if(_data.index()==0){
-                auto &contents = get<VectorTy>(Other._data);
-                if(contents.size()>0){
-                    auto cmpRes = *this <=> *contents[0];
-                    if(cmpRes == 0 && contents.size()>1) {
-                        return strong_ordering::less;
-                    }
-                    return cmpRes;
-                } else {
-                    return strong_ordering::greater;
-                }
-            }
-
-            if( Other._data.index() == 0 ){
-                auto& contents = get<VectorTy>(_data);
-                if(contents.size()>0){
-                    auto cmpRes = *contents[0] <=> Other;
-                    if(cmpRes == 0 && contents.size()>1){
-                        return strong_ordering::greater;
-                    }
-                    return cmpRes;
-                } else {
-                    return strong_ordering::less;
-                }
-            }
-
-            auto& contents = get<VectorTy>(_data);
-            auto& otherContents = get<VectorTy>(Other._data);
-            for(st idx = 0;idx<contents.size() && idx<otherContents.size();++idx){
-                auto compRes = *contents[idx] <=> *otherContents[idx];
-                if(compRes!=0) {
-                    return compRes;
-                }
-            }
-
-            return contents.size() <=> otherContents.size();
+                            return left.size() <=> right.size();
+                        }
+                        }
+                    , _data, Other._data
+                    );
         }
     };
 
