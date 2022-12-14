@@ -152,6 +152,7 @@ shared_ptr<Packet> parsePacket(string input){
 
 void part2(){
     i64 total = 0;
+# if 0
     auto lines = IO::fromCin();
 
     using ListTy = data_structures::RecursiveList<i64>;
@@ -176,13 +177,38 @@ void part2(){
 
     total =1;
     for(st idx = 0; idx<packages.size();++idx){
-        packages[idx]->printFlat();
         if(packages[idx]->toString() == "[[2]]" || packages[idx]->toString() =="[[6]]"){
             total *=(idx+1);
         }
     }
+#else
+    using ListTy = data_structures::RecursiveList<i64>;
+    using namespace data_structures;
 
-    IO::print(total);
+    i64 idx1 = 1;
+    i64 idx2 = 2;
+
+    auto item2 = parseRecList(string("[[2]]"));
+    auto item6 = parseRecList(string("[[6]]"));
+
+    string line;
+    while(getline(cin,line)){
+        if(line.empty()){
+            continue;
+        }
+        auto item = parseRecList(line);
+
+        if((*item<=>*item2)<0){
+            ++idx1;
+        }
+
+        if((*item<=>*item6)<0){
+            ++idx2;
+        }
+    }
+
+    IO::print(idx1*idx2);
+#endif
 }
 
 int main(int argc, char* argv[]){

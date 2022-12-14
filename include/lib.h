@@ -748,7 +748,7 @@ namespace data_structures {
     };
 
     template<typename ValueTy, char ListBegin = '[', char ListEnd = ']', char Delimiter = ','>
-    shared_ptr<RecursiveList<ValueTy>> parseRecList(string &input, st &idx) {
+    shared_ptr<RecursiveList<ValueTy>> parseRecList(const string &input, st &idx) {
         using ListTy = RecursiveList<ValueTy>;
         using PtrTy = shared_ptr<ListTy>;
         using VecTy = V<PtrTy>;
@@ -773,18 +773,20 @@ namespace data_structures {
             if(input[idx]==Delimiter) {
                 ++idx;
             }
-
-            /*
-            ValueTy value = parseValue(input,idx);
-            contents.emplace_back(make_shared<ListTy>(value));*/
         }
         ++idx;
 
         return make_shared<ListTy>(contents);
     }
 
-    template<typename ValueTy = i64, char ListBegin = '[', char ListEnd = ']', char Delimiter = ','>
+    /*template<typename ValueTy = i64, char ListBegin = '[', char ListEnd = ']', char Delimiter = ','>
     shared_ptr<RecursiveList<ValueTy>> parseRecList(string input) {
+        st idx = 1;
+        return parseRecList<ValueTy,ListBegin,ListEnd,Delimiter>(input,idx);
+    }*/
+
+    template<typename ValueTy = i64, char ListBegin = '[', char ListEnd = ']', char Delimiter = ','>
+    shared_ptr<RecursiveList<ValueTy>> parseRecList(const string &input) {
         st idx = 1;
         return parseRecList<ValueTy,ListBegin,ListEnd,Delimiter>(input,idx);
     }
