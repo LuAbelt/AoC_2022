@@ -254,9 +254,20 @@ namespace util {
         return result;
     }
 
+    template<typename T>
+    void sort(T &first, T &second){
+        if(second<first){
+            std::swap(first,second);
+        }
+    }
+
     void strip(string &s, char stripChar = ' ') {
         st begin = s.find_first_not_of(stripChar);
         st end = s.find_last_not_of(stripChar);
+
+        if(end!=string::npos){
+            ++end;
+        }
 
         s = s.substr(begin,end-begin);
     }
@@ -277,10 +288,12 @@ namespace util {
                 util::strip(element);
             }
 
-            result.emplace_back();
+            result.emplace_back(element);
 
             if( end != string::npos) {
                 begin = end+sepLength;
+            } else {
+                begin = end;
             }
 
             end = input.find(separator,end+sepLength);
@@ -1155,9 +1168,9 @@ namespace transform {
 
 namespace geometry {
     struct Point{
-        int x,y;
+        i64 x,y;
 
-	auto operator<=>(const Point&) const = default;
+	    auto operator<=>(const Point&) const = default;
     };
 
     struct Line{
