@@ -1060,7 +1060,7 @@ namespace transform {
 
         Coord & operator-=(Coord const & Other) {
             for(size_t i = 0; i<_coords.size(); ++i){
-                _coords[i] += Other._coords[i];
+                _coords[i] -= Other._coords[i];
             }
             return *this;
         }
