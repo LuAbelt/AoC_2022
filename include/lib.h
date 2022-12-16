@@ -1070,6 +1070,12 @@ namespace transform {
             result-=Other;
             return result;
         }
+
+        Coord() {
+            for(auto& item : _coords){
+                item = 0;
+            }
+        }
     };
 
     using Coord3 = Coord<3>;
@@ -2054,9 +2060,10 @@ namespace graphs {
         return dist;
     }
 
-    vector<i64> dijkstra_unit(Adj &adj, i64 start){
+    auto dijkstra_unit(Adj &adj, i64 start){
         vector<i64> dist(adj.size(), maxval<i64>());
         dist[start] = 0;
+        V<i64> parent(adj.size(),0);
 
         priority_queue<i64pair,vector<i64pair>,greater<>> frontier;
 
@@ -2080,12 +2087,13 @@ namespace graphs {
                 if(dist[node] + weight < dist[target]){
                     //if(target==targetId)IO::print("Updated target dist to ", dist[node] + weight, "from node",node);
                     dist[target] = dist[node] + weight;
+                    parent[target] = node;
                     frontier.push({dist[target], target});
                 }
             }
         }
 
-        return dist;
+        return make_tuple(dist,parent);
     }
 
     auto dijkstra(V<V<i64pair>> &adj, i64 start){
