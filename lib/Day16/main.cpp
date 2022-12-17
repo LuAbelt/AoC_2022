@@ -156,6 +156,7 @@ void part2(){
                     auto nFlow = node.flow + minLeft * flows[idx];
                     //IO::print("At node ",node.node,"at minute",node.minutes," moving to valve ",idx," resulting in new flow",nFlow);
                     totalFlow = max(totalFlow, nFlow);
+                    
                     q += PathState{idx, minLeft, nFlow, nOpen};
 
                     candidates[nOpen] = max(candidates[nOpen],nFlow);

@@ -41,17 +41,15 @@
   <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations>
       <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-G Ninja" />
+      <configuration PROFILE_NAME="Release" ENABLED="true" CONFIG_NAME="Release" GENERATION_OPTIONS="-G Ninja" BUILD_OPTIONS="-- -j 6" />
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2a02d03c-57e0-43af-8f46-498b1d041f22" name="Changes" comment="* Finished Advent of Code. Merry Christmas">
+    <list default="true" id="2a02d03c-57e0-43af-8f46-498b1d041f22" name="Changes" comment="* Finished Day16">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Day1/input" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Day1/input" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Day1/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Day1/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Day1/sample_input" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Day1/sample_input" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Day2/input" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Day2/input" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Day2/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Day2/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Day2/sample_input" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Day2/sample_input" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Day16/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Day16/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Day17/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Day17/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/Day17/sample_input" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Day17/sample_input" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +62,7 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -74,39 +73,34 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "last_opened_file_path": "C:/Projects/AoC_2015",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "configurable.group.build",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Projects/AdventOfCode&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Projects\AoC_2022\lib" />
       <recent name="C:\Projects\AoC_2022\include" />
     </key>
   </component>
-  <component name="RunManager" selected="CMake Application.Day2 Second">
+  <component name="RunManager" selected="CMake Application.Day17 Second">
     <configuration default="true" type="GradleAppRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.cpp.gradle.execution.GradleNativeBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
       </method>
     </configuration>
     <list>
@@ -253,6 +247,20 @@
       <workItem from="1669713465852" duration="13000" />
       <workItem from="1669875289495" duration="1878000" />
       <workItem from="1669963919651" duration="1606000" />
+      <workItem from="1670922475780" duration="19065000" />
+      <workItem from="1670993659981" duration="2288000" />
+      <workItem from="1670996075120" duration="2761000" />
+      <workItem from="1671006789770" duration="1430000" />
+      <workItem from="1671013009862" duration="3313000" />
+      <workItem from="1671023593435" duration="3094000" />
+      <workItem from="1671029953502" duration="11000" />
+      <workItem from="1671080079626" duration="9894000" />
+      <workItem from="1671105088645" duration="64000" />
+      <workItem from="1671115928085" duration="3280000" />
+      <workItem from="1671167635499" duration="14568000" />
+      <workItem from="1671191020537" duration="4210000" />
+      <workItem from="1671253005055" duration="13122000" />
+      <workItem from="1671271668557" duration="4404000" />
     </task>
     <task id="LOCAL-00001" summary="* Initial Commit&#10;&#10;- Includes solutions for first three days">
       <created>1638554835253</created>
@@ -324,7 +332,77 @@
       <option name="project" value="LOCAL" />
       <updated>1640470906951</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="* Finished Day13">
+      <created>1670930026487</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1670930026487</updated>
+    </task>
+    <task id="LOCAL-00012" summary="* Tidied up code">
+      <created>1670934492996</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1670934492996</updated>
+    </task>
+    <task id="LOCAL-00013" summary="* Added generalized RecursiveList class">
+      <created>1670948891832</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1670948891832</updated>
+    </task>
+    <task id="LOCAL-00014" summary="* Finished Day14">
+      <created>1671013044143</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1671013044143</updated>
+    </task>
+    <task id="LOCAL-00015" summary="* Changed implementation of RecursiveList to use std::visit for something almost like pattern matching">
+      <created>1671014691632</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1671014691632</updated>
+    </task>
+    <task id="LOCAL-00016" summary="* Optimized Day13">
+      <created>1671025077523</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1671025077523</updated>
+    </task>
+    <task id="LOCAL-00017" summary="* Optimized Day13 part2">
+      <created>1671026451320</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1671026451320</updated>
+    </task>
+    <task id="LOCAL-00018" summary="* Removed old unused Package class from Day13 main">
+      <created>1671026505666</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1671026505666</updated>
+    </task>
+    <task id="LOCAL-00019" summary="* Finished Day15">
+      <created>1671096244360</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1671096244360</updated>
+    </task>
+    <task id="LOCAL-00020" summary="* Finished Day16">
+      <created>1671194347155</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1671194347155</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -352,32 +430,50 @@
     <MESSAGE value="* Finished Day 21" />
     <MESSAGE value="* Finished Day 22" />
     <MESSAGE value="* Finished Advent of Code. Merry Christmas" />
-    <option name="LAST_COMMIT_MESSAGE" value="* Finished Advent of Code. Merry Christmas" />
+    <MESSAGE value="* Finished Day13" />
+    <MESSAGE value="* Tidied up code" />
+    <MESSAGE value="* Added generalized RecursiveList class" />
+    <MESSAGE value="* Finished Day14" />
+    <MESSAGE value="* Changed implementation of RecursiveList to use std::visit for something almost like pattern matching" />
+    <MESSAGE value="* Optimized Day13" />
+    <MESSAGE value="* Optimized Day13 part2" />
+    <MESSAGE value="* Removed old unused Package class from Day13 main" />
+    <MESSAGE value="* Finished Day15" />
+    <MESSAGE value="* Finished Day16" />
+    <option name="LAST_COMMIT_MESSAGE" value="* Finished Day16" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lib/Day22/main.cpp</url>
-          <line>436</line>
-          <option name="timeStamp" value="21" />
+          <url>file://$PROJECT_DIR$/lib/Day13/main.cpp</url>
+          <line>69</line>
+          <option name="timeStamp" value="70" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lib/Day22/main.cpp</url>
-          <line>100</line>
-          <option name="timeStamp" value="26" />
+          <url>file://$PROJECT_DIR$/lib/Day15/main.cpp</url>
+          <line>86</line>
+          <option name="timeStamp" value="88" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lib/Day23/main.cpp</url>
-          <line>386</line>
-          <option name="timeStamp" value="37" />
+          <url>file://$PROJECT_DIR$/lib/Day17/main.cpp</url>
+          <line>156</line>
+          <option name="timeStamp" value="89" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/lib/Day1/main.cpp</url>
-          <line>61</line>
-          <option name="timeStamp" value="38" />
+          <url>file://$PROJECT_DIR$/lib/Day17/main.cpp</url>
+          <line>282</line>
+          <option name="timeStamp" value="122" />
         </line-breakpoint>
       </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="CMakeExceptionBreakpoint" />
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
     </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
