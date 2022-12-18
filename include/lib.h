@@ -1487,6 +1487,26 @@ namespace geometry {
         [[nodiscard]] Coord max() const{
             return _max;
         }
+
+        void extend(const Coord & position) {
+            _min = Coord{ ::min(_min.x(),position.x())
+                          ,::min(_min.y(),position.y())
+                          ,::min(_min.z(),position.z())};
+
+            _max = Coord{ ::max(_max.x(),position.x())
+                    ,::max(_max.y(),position.y())
+                    ,::max(_max.z(),position.z())};
+
+        }
+
+        bool contains(const Coord & position) const {
+            return (position.x()>=_min.x())
+                    && (position.y()>=_min.y())
+                    && (position.z()>=_min.z())
+                    && (position.x()<=_max.x())
+                       && (position.y()<=_max.y())
+                       && (position.z()<=_max.z());
+        }
     };
 }
 

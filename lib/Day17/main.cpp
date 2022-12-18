@@ -74,10 +74,9 @@ void drawGrid(const set<Coord> &grid, const Part &activePiece, const Coord &posi
 
 void drawGrid(const set<Coord> &grid, st maxY,st numRows = 20){
     V<string> visualization;
-    st minY = max(maxY-numRows,20UL);
-    visualization += "+-------+ "+minY;
+    visualization += "+-------+ 0";
 
-    for(i64 i=minY;i<=maxY;++i){
+    for(i64 i=0;i<maxY;++i){
         visualization += "|.......| " + to_string(i+1);
     }
 
@@ -86,13 +85,12 @@ void drawGrid(const set<Coord> &grid, st maxY,st numRows = 20){
         assert(position.x()<=8);
         assert(position.y()>=0);
 
-        if(position.y()<minY || position.y()>=maxY){
-            continue;
-        }
-        visualization[position.y()-minY][position.x()+1] = '#';
+        visualization[position.y()][position.x()+1] = '#';
     }
 
-    for(auto line : visualization | ranges::views::reverse){
+    visualization[0] = "+-------+";
+
+    for(auto line : visualization | ranges::views::reverse | ranges::views::take(numRows)){
         IO::print(line);
     }
 }
@@ -154,38 +152,40 @@ void part1(){
     i64 moveIdx = 0;
 
     for(st move = 0; move<2022;++move){
-        IO::print("Spawn new piece");
+        //IO::print("Spawn new piece");
         auto part = pieces[move % 5];
         auto position = Coord{2,(i64)curHeight+4};
-        drawGrid(grid,part,position,curHeight+7);
+        //drawGrid(grid,part,position,curHeight+7);
 
         while(true) {
             char dirChar = moves[moveIdx%moves.size()];
             switch (dirChar) {
                 case '<':
-                    IO::print("Move piece left");
+                    //IO::print("Move piece left");
                     movePart(LEFT,grid,position,part);
-                    drawGrid(grid,part,position,curHeight+7);
+                    //drawGrid(grid,part,position,curHeight+7);
                     break;
 
                 case '>':
-                    IO::print("Move piece right");
+                    //IO::print("Move piece right");
                     movePart(RIGHT,grid,position,part);
-                    drawGrid(grid,part,position,curHeight+7);
+                    //drawGrid(grid,part,position,curHeight+7);
                     break;
             }
             ++moveIdx;
 
-            IO::print("Move piece down");
+            //IO::print("Move piece down");
             if(!movePart(DOWN,grid,position,part)){
                 fixPart(part,position,grid);
                 curHeight = max(curHeight,position.y()+part.size()-1);
-                drawGrid(grid,part,position,curHeight+7);
+                //drawGrid(grid,part,position,curHeight+7);
                 break;
             }
-            drawGrid(grid,part,position,curHeight+7);
+            //drawGrid(grid,part,position,curHeight+7);
         }
     }
+
+    drawGrid(grid,curHeight+5,curHeight+6);
 
     IO::print(curHeight);
 }
@@ -274,6 +274,8 @@ void part2(){
     //Calculate number of moves this cycle took
     st cycleLength = entry->second.first - movesRemaining;
     st heightDiff = curHeight - entry->second.second;
+
+    IO::print(numMovees-movesRemaining, curHeight, cycleLength,heightDiff);
 
     //We do not explicitly simulate the cycles
     st simulatedHeight = heightDiff * (movesRemaining/cycleLength);
