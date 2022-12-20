@@ -87,7 +87,6 @@ void part2(){
             }
 
             if(coords.find(candidate)!=coords.end()){
-                //IO::print("Found coord",candidate.x(),candidate.y(),candidate.z(), "from", current.x(),current.y(),current.z());
                 ++total;
 
             } else {

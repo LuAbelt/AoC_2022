@@ -264,7 +264,9 @@ namespace util {
     void strip(string &s, char stripChar = ' ') {
         st begin = s.find_first_not_of(stripChar);
         st end = s.find_last_not_of(stripChar);
-
+        if(begin==string::npos){
+            return;
+        }
         if(end!=string::npos){
             ++end;
         }
