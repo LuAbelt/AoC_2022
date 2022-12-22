@@ -2,263 +2,577 @@
 // Created by lukas on 03/12/2021.
 //
 
-#include <iostream>
-#include <vector>
-#include <cassert>
+#include "lib.h"
 
-using namespace std;
-
-class Coord{
-    int64_t _x;
-    int64_t _y;
-    int64_t _z;
-public:
-    Coord(int64_t x, int64_t y, int64_t z)
-            :_x(x),_y(y),_z(z){}
-
-    [[nodiscard]] int64_t x() const{
-        return _x;
-    }
-
-    [[nodiscard]] int64_t y() const{
-        return _y;
-    }
-
-    [[nodiscard]] int64_t z() const{
-        return _z;
-    }
-
-    [[nodiscard]] uint64_t manhattanLength() const{
-        return abs(_x)+abs(_y)+ abs(_z);
-    }
-
-    bool operator==(Coord const & Other) const{
-        return _x==Other._x && _y==Other._y&&_z==Other._z;
-    }
-    bool operator<(Coord const & Other) const{
-        return _x<Other._x && _y<Other._y && _z<Other._z;
-    }
-
-    bool operator<=(Coord const &Other) const{
-        return _x<=Other._x && _y<=Other._y&&_z<=Other._z;;
-    }
-
-    bool operator>(Coord const &Other) const{
-        return _x>Other._x && _y>Other._y&&_z>Other._z;;
-    }
-
-    bool operator>=(Coord const &Other) const{
-        return _x>=Other._x && _y>=Other._y&&_z>=Other._z;;
-    }
-
-    Coord & operator+=(Coord const & Other) {
-        _x += Other._x;
-        _y += Other._y;
-        _z += Other._z;
-        return *this;
-    }
-
-    Coord operator+(Coord const & Other) const{
-        Coord result = *this;
-        result+=Other;
-        return result;
-    }
-
-    Coord & operator-=(Coord const & Other) {
-        _x -= Other._x;
-        _y -= Other._y;
-        _z -= Other._z;
-        return *this;
-    }
-
-    Coord operator-(Coord const & Other) const{
-        Coord result = *this;
-        result-=Other;
-        return result;
-    }
+enum CellState {
+    Nothing
+    ,Empty
+    ,Wall
 };
 
+using Coord = transform::Coord<2>;
 
-BoundingBox parseLine(const string& line, bool &on){
-    on = line.starts_with("on");
+array<transform::Coord<2>,4> Directions = {
+        Coord{0,1}
+        ,Coord{1,0}
+        ,Coord{0,-1}
+        ,Coord{-1,0}
+};
 
-    size_t xStart = line.find("x=")+2;
-    size_t yStart = line.find("y=")+2;
-    size_t zStart = line.find("z=")+2;
-    int64_t minX = stoi(line.substr(xStart,line.find("..")-xStart));
-    int64_t maxX = stoi(line.substr(line.find("..")+2,line.find(',')-line.find("..")-2));
-    int64_t minY = stoi(line.substr(yStart,line.find("..",yStart)-yStart));
-    int64_t maxY = stoi(line.substr(line.find("..",yStart)+2,line.find(',',yStart)-line.find("..",yStart)-2));
-    int64_t minZ = stoi(line.substr(zStart,line.find("..",zStart)-zStart));
-    int64_t maxZ = stoi(line.substr(line.find("..",zStart)+2,line.find(',',zStart)-line.find("..",zStart)-2));
+auto parseInput() {
+    auto lines = IO::fromCin();
+    auto mapLines = lines | ranges::views::take_while([](auto& line){return !line.empty();});
+    st maxLength = 0;
+    st mapSize = 0;
+    for(auto&line : mapLines){
+        maxLength = max(maxLength,line.length());
+        ++mapSize;
+    }
 
-    assert(minX<=maxX);
-    assert(minY<=maxY);
-    assert(minZ<=maxZ);
+    V<V<CellState>> map(mapSize+2,V<CellState>(maxLength+2,Nothing));
+    st curLine = 1;
+    for(auto &line : mapLines){
+        st curColumn = 1;
+        for(auto &c : line){
+            switch (c) {
+                case '.':
+                    map[curLine][curColumn] = Empty;
+                    break;
+                case '#':
+                    map[curLine][curColumn] = Wall;
+                    break;
+            }
+            ++curColumn;
+        }
+        ++curLine;
+    }
 
-    return BoundingBox{{minX,minY,minZ},{maxX,maxY,maxZ}};
+    return make_tuple(map,lines[lines.size()-1]);
 }
-
-ostream& operator<<(ostream& os, const Coord& c)
-{
-    os << "(" << c.x()<<"|"<<c.y()<<"|"<<c.z()<<")";
-    return os;
-}
-
-ostream& operator<<(ostream& os, const BoundingBox& bb)
-{
-    os << bb.min() << "-" << bb.max() << " (Volume: "<<bb.volume() << ")";
-    return os;
-}
-
+using Coord = transform::Coord<2>;
 
 
 void part1(){
-    string line;
-    std::vector<BoundingBox> turnedOnLights;
+    auto [map,instructions] = parseInput();
 
-    while (getline(cin,line)&&!line.empty()){
-        cout << line<<endl;
-        bool on = false;
-        auto currentBox = parseLine(line,on);
-        //18719358303783
-        BoundingBox bounds{{-50,-50,-50},{50,50,50}};
+    st direction = 0;
+    Coord current{1,1};
 
-        if(!bounds.intersects(currentBox)){
-            continue;
+    while(map[current.x()][current.y()] == Nothing){
+        current += Directions[direction];
+    }
+
+    st instrIdx = 0;
+    while (instrIdx != instructions.size()){
+        auto nextIdx = instrIdx;
+        while(instrIdx< instructions.size() && isdigit(instructions[nextIdx])){
+            nextIdx++;
         }
 
-        if(on){
-            std::vector<BoundingBox> lightsToTurnOn{currentBox};
-            for (const auto turnedOnLight:turnedOnLights) {
+        st steps = atoi(instructions.substr(instrIdx,(nextIdx-instrIdx)).c_str());
 
-                vector<BoundingBox> newLightsToTurnOn;
+        for(int i = 0; i<steps;++i){
+            Coord next = current + Directions[direction];
 
-                for (const auto& lightToTurnOn:lightsToTurnOn) {
-                    if(turnedOnLight.intersects(lightToTurnOn)){
-                        auto intersection = lightToTurnOn.intersection(turnedOnLight);
-                        auto dissection = lightToTurnOn.dissect(intersection);
-                        newLightsToTurnOn.insert(newLightsToTurnOn.end()
-                                                 ,dissection.begin()
-                                                 ,dissection.end());
-                    }else{
-                        newLightsToTurnOn.emplace_back(lightToTurnOn);
+            bool end = false;
+            switch (map[next.x()][next.y()]) {
+                case Nothing: {
+                    auto otherDir = (direction + 2) % 4;
+                    Coord otherNext = current + Directions[otherDir];
+                    while (otherNext.y()>=0
+                            && otherNext.x()>=0
+                            && otherNext.x() < map.size()
+                            && otherNext.y() < map[0].size()
+                            && map[otherNext.x()][otherNext.y()] != Nothing) {
+                        otherNext += Directions[otherDir];
                     }
+                    otherNext += Directions[direction];
+                    if (map[otherNext.x()][otherNext.y()] == Empty) {
+                        current = otherNext;
+                    } else if (map[otherNext.x()][otherNext.y()] == Wall) {
+                        end = true;
+                        break;
+                    } else {
+                        IO::print("No");
+                    }
+                    break;
                 }
-                lightsToTurnOn = newLightsToTurnOn;
+                case Empty:
+                    current = next;
+                    break;
+                case Wall:
+                    end = true;
+                    break;
             }
-
-            turnedOnLights.insert(turnedOnLights.end()
-                                  ,lightsToTurnOn.begin()
-                                  , lightsToTurnOn.end());
-        }else{
-            vector<BoundingBox> newTurnedOnLights;
-            for (const auto turnedOnLight:turnedOnLights) {
-                if(turnedOnLight.intersects(currentBox)){
-                    auto intersection = turnedOnLight.intersection(currentBox);
-                    auto dissection = turnedOnLight.dissect(intersection);
-
-                    newTurnedOnLights.insert(newTurnedOnLights.end(),
-                                             dissection.begin(),
-                                             dissection.end());
-                }else{
-                    newTurnedOnLights.emplace_back(turnedOnLight);
-                }
+            if(end){
+                break;
             }
-
-            turnedOnLights = newTurnedOnLights;
         }
 
+        instrIdx = nextIdx;
 
-        /*uint64_t totalVol = 0;
-        for (const auto& light:turnedOnLights) {
-            cout << light << endl;
-            totalVol+=light.volume();
+        if(instrIdx < instructions.size()){
+            if(instructions[instrIdx]=='R'){
+                direction = (direction + 1)%4;
+            } else if (instructions[instrIdx]=='L'){
+                direction = (direction+3)%4;
+            }
+            ++instrIdx;
         }
-        cout << totalVol << endl << endl;*/
     }
 
-    uint64_t totalVol = 0;
-    for (const auto& light:turnedOnLights) {
-        //cout << light << endl;
-        totalVol+=light.volume();
-    }
-
-    cout << totalVol << endl;
+    IO::print(1000*(current.x())+4*(current.y())+direction);
 }
 
 void part2(){
-    string line;
-    std::vector<BoundingBox> turnedOnLights;
+    auto [map,instructions] = parseInput();
 
-    while (getline(cin,line)&&!line.empty()){
-        cout << line<<endl;
-        bool on = false;
-        auto currentBox = parseLine(line,on);
-        //18719358303783
-        /*BoundingBox bounds{{-50,-50,-50},{50,50,50}};
+    st direction = 0;
+    Coord current{1,1};
+    st currentSide = 1;
 
-        if(!bounds.intersects(currentBox)){
-            continue;
-        }
-*/
-        if(on){
-            std::vector<BoundingBox> lightsToTurnOn{currentBox};
-            for (const auto turnedOnLight:turnedOnLights) {
+    while(map[current.x()][current.y()] == Nothing){
+        current += Directions[direction];
+    }
 
-                vector<BoundingBox> newLightsToTurnOn;
+    std::map<Coord,i64> sideMap;
+#ifdef SAMPLE
+    i64 sideLength = 4;
+#else
+    i64 sideLength = 50;
+#endif
 
-                for (const auto& lightToTurnOn:lightsToTurnOn) {
-                    if(turnedOnLight.intersects(lightToTurnOn)){
-                        auto intersection = lightToTurnOn.intersection(turnedOnLight);
-                        auto dissection = lightToTurnOn.dissect(intersection);
-                        newLightsToTurnOn.insert(newLightsToTurnOn.end()
-                                ,dissection.begin()
-                                ,dissection.end());
-                    }else{
-                        newLightsToTurnOn.emplace_back(lightToTurnOn);
+    {
+        i64 sideIdx = 1;
+        for (i64 x = 1; x < map.size(); x += sideLength) {
+            for (i64 y = 1; y < map[x].size(); y += sideLength) {
+                if(map[x][y]!=Nothing){
+                    for(i64 xx=x;xx<x+sideLength;++xx){
+                        for(i64 yy=y;yy<y+sideLength;++yy){
+                            sideMap[Coord{xx,yy}] = sideIdx;
+                        }
                     }
-                }
-                lightsToTurnOn = newLightsToTurnOn;
-            }
-
-            turnedOnLights.insert(turnedOnLights.end()
-                    ,lightsToTurnOn.begin()
-                    , lightsToTurnOn.end());
-        }else{
-            vector<BoundingBox> newTurnedOnLights;
-            for (const auto turnedOnLight:turnedOnLights) {
-                if(turnedOnLight.intersects(currentBox)){
-                    auto intersection = turnedOnLight.intersection(currentBox);
-                    auto dissection = turnedOnLight.dissect(intersection);
-
-                    newTurnedOnLights.insert(newTurnedOnLights.end(),
-                                             dissection.begin(),
-                                             dissection.end());
-                }else{
-                    newTurnedOnLights.emplace_back(turnedOnLight);
+                    ++sideIdx;
                 }
             }
-
-            turnedOnLights = newTurnedOnLights;
         }
-
-
-        /*uint64_t totalVol = 0;
-        for (const auto& light:turnedOnLights) {
-            cout << light << endl;
-            totalVol+=light.volume();
-        }
-        cout << totalVol << endl << endl;*/
     }
 
-    uint64_t totalVol = 0;
-    for (const auto& light:turnedOnLights) {
-        //cout << light << endl;
-        totalVol+=light.volume();
+    st instrIdx = 0;
+
+    V<string> pathMap(map.size(),string{});
+    for (int x = 0; x < map.size(); ++x) {
+        for (int y = 0; y < map[x].size(); ++y) {
+            pathMap[x] += map[x][y] == Nothing ? ' ' : map[x][y] == Empty ? '.' : '#';
+        }
     }
 
-    cout << totalVol << endl;
+    auto getNext = [&sideMap,&map](const Coord &current, i64 direction) -> tuple<Coord,i64,bool>{
+        Coord next = current+Directions[direction];
+        i64 nextDir = direction;
+#ifdef SAMPLE
+        switch (map[next.x()][next.y()]) {
+            case Nothing:
+                switch (sideMap[current]) {
+                    case 1:
+                        switch (direction) {
+                            case 0:
+                                next = Coord{
+                                    13-current.x(),
+                                    16
+                                };
+                                nextDir = 2;
+                                assert(map[next.x()][next.y()] != Nothing);
+                            break;
+                            case 2:
+                            {
+                                i64 nextX = 5;
+                                i64 nextY = 4 + current.x();
+                                nextDir = 1;
+                                next = Coord{nextX,nextY};
+                            }
+                                assert(map[next.x()][next.y()] != Nothing);
+                            break;
+                            case 3:
+                                next = Coord{
+                                    5,
+                                    5-(current.y()-8)
+                                };
+                                nextDir = 1;
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (direction) {
+                            case 1:
+                                nextDir = 3;
+                                next = Coord {
+                                    12,
+                                    13-current.y()
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 2:
+                                nextDir = 3;
+                                next = Coord {
+                                    12,
+                                    17-(current.x()-4)
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 3:
+                                nextDir = 1;
+                                next = Coord {
+                                    1,
+                                    13-current.y()
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                    case 3:
+                        switch (direction) {
+                            case 1:
+                                nextDir = 0;
+                                next = Coord {
+                                    13-(current.y()-4),
+                                    9
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 3:
+                                nextDir = 0;
+                                next = Coord {
+                                    current.y()-4,
+                                    9
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                    case 4:
+                        //Only one direction here
+                        nextDir = 1;
+                        next = Coord {
+                            9,
+                            17-(current.x()-4)
+                        };
+                        assert(map[next.x()][next.y()] != Nothing);
+                        break;
+                    case 5:
+                        switch (direction) {
+                            case 1:
+                                nextDir = 3;
+                                next = Coord {
+                                    8,
+                                    5-(current.y()-8)
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 2:
+                                nextDir = 3;
+                                next = Coord{
+                                    8,
+                                    8-(current.y()-8)
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                    case 6:
+                        switch (direction) {
+                            case 0:
+                                nextDir = 2;
+                                next = Coord{
+                                    5-(current.y()-8),
+                                    12
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 1:
+                                nextDir = 0;
+                                next = Coord{
+                                    9-(current.y()-12),
+                                    1
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 3:
+                                nextDir = 2;
+                                next = Coord {
+                                    9-(current.x()-12),
+                                    12
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                }
+                if(map[next.x()][next.y()] == Wall){
+                    return make_tuple(current,direction,true);
+                }
+                assert(map[next.x()][next.y()] == Empty);
+                return make_tuple(next,nextDir,false);
+                break;
+            case Empty:
+                return make_tuple(next,direction,false);
+                break;
+            case Wall:
+                return make_tuple(current,direction,true);
+                break;
+        }
+#else
+        /*
+         * Our Map looks roughly like this:
+         *            1122
+         *            1122
+         *            33
+         *            33
+         *          4455
+         *          4455
+         *          66
+         *          66
+         */
+        switch (map[next.x()][next.y()]) {
+            case Nothing:
+                switch (sideMap[current]) {
+                    case 1:
+                        switch (direction) {
+                            case 2:
+                            // Leaving side 1 on the left, entering 4 from the right
+                                next = Coord{
+                                    151-current.x(),
+                                    1
+                                };
+                                nextDir = 0;
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 3:
+                            // Leaving side 1 from the top, entering side 6 from the right
+                            {
+                                nextDir = 0;
+                                next = Coord {
+                                    150+(current.y()-50),
+                                    1
+                                };
+                            }
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (direction) {
+                            case 0:
+                                // Leacing side 2 to th right, entering side 5 from the right
+                                nextDir = 2;
+                                next = Coord{
+                                    151-current.x(),
+                                    100
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 1:
+                                // Leaving side 2 to the bottom, entering 3 from the right
+                                nextDir = 2;
+                                next = Coord{
+                                    50+(current.y()-100),
+                                    100
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 3:
+                                // Leaving side 2 from the top, entering side 6 from the bottom
+                                nextDir = 3;
+                                next = Coord{
+                                    200,
+                                    current.y()-100
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                    case 3:
+                        switch (direction) {
+                            case 0:
+                                // Leaving side 3 to the right, entering 2 from the bottom
+                                nextDir = 3;
+                                next = Coord{
+                                    50,
+                                    100+(current.x()-50)
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 2:
+                                // Leaving side 3 to the left, entering 4 from the top
+                                nextDir = 1;
+                                next = Coord{
+                                    101,
+                                    current.x()-50
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                    case 4:
+                        switch (direction) {
+                            case 2:
+                                // Leaving 4 to the right, entering 1 from the left
+                                nextDir = 0;
+                                next = Coord{
+                                    51-(current.x()-100),
+                                    51
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 3:
+                                // Leaving 4 to the top, entering 3 from the left
+                                nextDir = 0;
+                                next = Coord{
+                                    50+current.y(),
+                                    51
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                    case 5:
+                        switch (direction) {
+                            case 0:
+                                // Leacing 5 to the right, entering 2 from the right
+                                nextDir = 2;
+                                next = Coord{
+                                    151-current.x(),
+                                    150
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 1:
+                                // Leaving 5 to the bottom. entering 6 from the right
+                                nextDir = 2;
+                                next = Coord{
+                                    150+(current.y()-50),
+                                    50
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                    case 6:
+                        switch (direction) {
+                            case 0:
+                                // Leaving 6 to the right, entering 5 from the bottom
+                                nextDir = 3;
+                                next = Coord{
+                                    150,
+                                    50+(current.x()-150)
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 1:
+                                // Leaving 6 to the bottom, entering 2 from the top
+                                nextDir = 1;
+                                next = Coord {
+                                    1,
+                                    100+current.y()
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            case 2:
+                                // Leaving 6 to the left, entering 1 from the top
+                                nextDir = 1;
+                                next = Coord{
+                                    1,
+                                    50+(current.x()-150)
+                                };
+                                assert(map[next.x()][next.y()] != Nothing);
+                                break;
+                            default:
+                                IO::print("Wrong",sideMap[current],direction);
+                                break;
+                        }
+                        break;
+                }
+                if(map[next.x()][next.y()] == Wall){
+                    return make_tuple(current,direction,true);
+                }
+                assert(map[next.x()][next.y()] == Empty);
+                return make_tuple(next,nextDir,false);
+            case Empty:
+                return make_tuple(next,direction,false);
+            case Wall:
+                return make_tuple(current,direction,true);
+        }
+
+#endif
+    };
+
+    array<char,4> symbols = {'>','v','<','^'};
+    while (instrIdx != instructions.size()){
+        auto nextIdx = instrIdx;
+        while(instrIdx< instructions.size() && isdigit(instructions[nextIdx])){
+            nextIdx++;
+        }
+
+        st steps = atoi(instructions.substr(instrIdx,(nextIdx-instrIdx)).c_str());
+
+        for(int i = 0; i<steps;++i){
+            pathMap[current.x()][current.y()] = symbols[direction];
+            bool end;
+            tie(current, direction, end) = getNext(current,direction);
+            if(end){
+                break;
+            }
+        }
+
+        instrIdx = nextIdx;
+
+        if(instrIdx < instructions.size()){
+            if(instructions[instrIdx]=='R'){
+                direction = (direction + 1)%4;
+            } else if (instructions[instrIdx]=='L'){
+                direction = (direction+3)%4;
+            }
+            ++instrIdx;
+        }
+
+        /*for(auto& line : pathMap){
+            IO::print(line);
+        }
+        IO::print();*/
+    }
+
+    IO::print(1000*(current.x())+4*(current.y())+direction);
 }
 
 int main(int argc, char* argv[]){
