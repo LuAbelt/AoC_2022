@@ -4,20 +4,198 @@
 
 #include "lib.h"
 
+using Coord = transform::Coord<2>;
+using FaceCoord = pair<st,Coord>;
+
 enum CellState {
     Nothing
     ,Empty
     ,Wall
 };
 
-using Coord = transform::Coord<2>;
+enum Direction {
+    RIGHT = 0,
+    DOWN,
+    LEFT,
+    UP,
+    NUM_DIRECTIONS
+};
 
-array<transform::Coord<2>,4> Directions = {
+using FaceNeighbour = V<array<pair<st,Direction>,NUM_DIRECTIONS>>;
+
+class Face {
+    st _sideLength;
+    V<V<bool>> _grid;
+    Coord _offset;
+public:
+
+    [[nodiscard]] st sideLength() const {
+        return _sideLength;
+    }
+
+    V<bool> &operator[](st idx) {
+        return _grid[idx];
+    }
+
+    const V<bool> &operator[](const st idx) const {
+        return _grid[idx];
+    }
+};
+
+array<transform::Coord<2>,Direction::NUM_DIRECTIONS> Directions = {
         Coord{0,1}
         ,Coord{1,0}
         ,Coord{0,-1}
         ,Coord{-1,0}
 };
+
+st getSideLength(const V<string> &input){
+    // Cube grids are either of outer dimensions of 4x3 or 5x2
+    st hLength = input[0].size();
+    st vLength = input.size();
+
+    auto gridDims = {pair<st,st>(4,3),pair<st,st>(5,2)};
+
+    for(auto & dim : gridDims){
+        auto candidate = hLength/dim.first;
+        if (candidate*dim.second == vLength) {
+            return candidate;
+        }
+
+        candidate = hLength/dim.second;
+        if(candidate*dim.first == vLength){
+            return candidate;
+        }
+    }
+
+    return 0;
+}
+
+bool inBounds(const Coord &c, st sideLength){
+    return c.x()>0 && c.x()<sideLength
+            && c.y()>0 && c.y()<sideLength;
+}
+
+auto traverseEdge(Coord &c, Direction from, Direction to, st sideLength){
+    Direction newDir = static_cast<Direction>((to + 2) % Direction::NUM_DIRECTIONS);
+    Coord newCoord;
+
+    array<i64,4> init = {0L,(i64)sideLength-1,(i64)sideLength-1,0L};
+
+    if( from == to ) {
+        st fixed = to%2;
+        st other = (to+1)%2;
+        Coord newC{0,0};
+        newC[fixed] = init[to];
+        newC[other] = sideLength-c[other]-1;
+        return make_tuple(newC, newDir);
+    }
+
+    if((from+2)%NUM_DIRECTIONS == to){
+        st fixed = to%2;
+        st other = (to+1)%2;
+        Coord newC{0,0};
+        newC[fixed] = init[to];
+        newC[other] = c[other];
+        return make_tuple(newC, newDir);
+    }
+
+    // TODO: Refactor me, can be generalized by checking if to==from+1
+
+    switch (from) {
+        case Direction::RIGHT:
+            switch (to) {
+                case Direction::DOWN:
+                    newCoord = Coord((i64)c.y(),
+                                     (i64)sideLength-1);
+                    break;
+                case Direction::UP:
+                    newCoord = Coord((i64)sideLength-c.y()-1,
+                                     0);
+                    break;
+                default:
+                    throw std::runtime_error("Direction not implemented");
+            }
+            break;
+        case Direction::DOWN:
+            switch (to) {
+                case Direction::RIGHT:
+                    newCoord = Coord((i64)sideLength-1,
+                                     (i64)c.x());
+                    break;
+                case Direction::LEFT:
+                    newCoord = Coord((i64)0,
+                                     (i64)sideLength-c.x()-1);
+                    break;
+                default:
+                    throw std::runtime_error("Direction not implemented");
+            }
+            break;
+        case Direction::LEFT:
+            switch (to) {
+                case Direction::DOWN:
+                    newCoord = Coord((i64)sideLength-c.y()-1
+                                    ,(i64)sideLength-1);
+                    break;
+                case Direction::UP:
+                    newCoord = Coord(c.y(),
+                                     0);
+                    break;
+                default:
+                    throw std::runtime_error("Direction not implemented");
+            }
+            break;
+        case Direction::UP:
+            switch (to) {
+                case Direction::RIGHT:
+                    newCoord = Coord((i64)(sideLength-1)
+                                    ,(i64)sideLength-c.x()-1);
+                    break;
+                case Direction::LEFT:
+                    newCoord = Coord(0,
+                                     (i64)c.x());
+                    break;
+                default:
+                    throw std::runtime_error("Direction not implemented");
+            }
+            break;
+        default:
+            throw std::runtime_error("Direction not implemented");
+    }
+
+    return make_tuple(newCoord,newDir);
+}
+
+auto getNext(const FaceCoord &current, Direction dir, const array<Face,6> &faces, const FaceNeighbour &neighbours){
+    auto [faceId, coord] = current;
+    Coord direction = Directions[dir];
+
+    auto next = coord + direction;
+
+    if(inBounds(next,faces[faceId].sideLength())){
+        // Our next coordinate is on the same face, check whether it is traversable
+        if (faces[faceId][next.x()][next.y()]){
+            return make_tuple(FaceCoord(faceId,next),dir,false);
+        } else {
+            return make_tuple(current,dir,true);
+        }
+    } else {
+        // We exceeded the bounds of the current face
+        // Check the transition of the current face to the next one
+        auto [nextFace,edge] = neighbours[faceId][dir];
+        Direction nDir;
+
+        tie(next,nDir) = traverseEdge(coord, dir, edge, faces[faceId].sideLength());
+
+        if(faces[nextFace][next.x()][next.y()]){
+            return make_tuple(FaceCoord(nextFace,next),nDir,false);
+        } else {
+            return make_tuple(current,dir,true);
+        }
+
+    }
+
+}
 
 auto parseInput() {
     auto lines = IO::fromCin();

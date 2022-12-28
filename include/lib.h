@@ -992,7 +992,6 @@ namespace transform {
         Coord(Args... args)
         requires (
                 Dimensions >=2
-                && Dimensions <= 4
                 && sizeof...(Args)==Dimensions
                 && (... && std::convertible_to<Args, int64_t>)
         )
@@ -1000,24 +999,28 @@ namespace transform {
         {
         }
 
-        [[nodiscard]] int x() const{
+        [[nodiscard]] i64 x() const{
             return _coords[0];
         }
 
-        [[nodiscard]] int y() const{
+        [[nodiscard]] i64 y() const{
             return _coords[1];
         }
 
-        [[nodiscard]] int z() const
+        [[nodiscard]] i64 z() const
         requires (Dimensions > 2)
         {
             return _coords[2];
         }
 
-        [[nodiscard]] int w() const
+        [[nodiscard]] i64 w() const
         requires (Dimensions > 3)
         {
             return _coords[3];
+        }
+
+        i64 &operator[](st idx) {
+            return _coords[idx];
         }
 
         [[nodiscard]] uint64_t manhattanLength() const{
