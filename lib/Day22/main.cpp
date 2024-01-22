@@ -2,10 +2,13 @@
 // Created by lukas on 03/12/2021.
 //
 
+#include <utility>
+
 #include "lib.h"
 
 using Coord = transform::Coord<2>;
 using FaceCoord = pair<st,Coord>;
+using LayoutGrid = V<V<st>>;
 
 enum CellState {
     Nothing
@@ -24,10 +27,18 @@ enum Direction {
 using FaceNeighbour = V<array<pair<st,Direction>,NUM_DIRECTIONS>>;
 
 class Face {
-    st _sideLength;
+    st _sideLength{};
     V<V<bool>> _grid;
     Coord _offset;
 public:
+
+    Face() = default;
+
+    Face (Coord offset, V<V<bool>> grid, st sideLength)
+    :_offset(offset)
+    ,_grid(std::move(grid))
+    ,_sideLength(sideLength)
+    {};
 
     [[nodiscard]] st sideLength() const {
         return _sideLength;
@@ -40,6 +51,18 @@ public:
     const V<bool> &operator[](const st idx) const {
         return _grid[idx];
     }
+
+    void print() {
+        IO::print("Face offset:",_offset.x(),_offset.y());
+        IO::print("Face representation:");
+
+        for(auto &line : _grid){
+            for(bool pos : line){
+                cout << (pos?'.':'#');
+            }
+            cout << endl;
+        }
+    }
 };
 
 array<transform::Coord<2>,Direction::NUM_DIRECTIONS> Directions = {
@@ -49,26 +72,29 @@ array<transform::Coord<2>,Direction::NUM_DIRECTIONS> Directions = {
         ,Coord{-1,0}
 };
 
-st getSideLength(const V<string> &input){
+/**
+ * Calculates the dimensions of a given cube map
+ * @param map A vector of strings, where spaces represent empty (irrelevant) positions, dots (.) traversable spots on a cube face and pound signs (#) non-traversable spots
+ * @return A tuple of (sideLength, (gridSizeH,gridSizeL))
+ */
+auto getDimensions(const V<string> &map) {
     // Cube grids are either of outer dimensions of 4x3 or 5x2
-    st hLength = input[0].size();
-    st vLength = input.size();
+    st hLength = std::accumulate(map.begin(),map.end(),0UL,[](st current, auto &line){return max(line.size(),current);});
+    st vLength = map.size();
 
-    auto gridDims = {pair<st,st>(4,3),pair<st,st>(5,2)};
+    auto gridDims = { pair<st,st>(4,3),
+                                    pair<st,st>(3,4),
+                                    pair<st,st>(5,2),
+                                    pair<st,st>(2,5) };
 
     for(auto & dim : gridDims){
         auto candidate = hLength/dim.first;
         if (candidate*dim.second == vLength) {
-            return candidate;
-        }
-
-        candidate = hLength/dim.second;
-        if(candidate*dim.first == vLength){
-            return candidate;
+            return make_tuple(candidate,dim);
         }
     }
 
-    return 0;
+    throw runtime_error("Could not automatically determine cube dimensions!");
 }
 
 bool inBounds(const Coord &c, st sideLength){
@@ -197,6 +223,144 @@ auto getNext(const FaceCoord &current, Direction dir, const array<Face,6> &faces
 
 }
 
+auto getInput() {
+    auto lines = IO::fromCin();
+    auto mapLines = lines | ranges::views::take_while([](auto& line){return !line.empty();});
+
+    V<string> map;
+    for(auto &&line : mapLines){
+        map += line;
+    }
+
+    return make_tuple(map,lines[lines.size()-1]);
+}
+
+Face parseFace(const V<string> &map, st sideLength, Coord &offset){
+    V<V<bool>> grid(sideLength,V<bool>(sideLength,true));
+
+    for(i64 hOff = 0; hOff < sideLength; ++hOff){
+        for(i64 vOff = 0; vOff < sideLength; ++vOff){
+            switch (map[offset.y()+vOff][offset.x()+hOff]) {
+                case '.':
+                    grid[vOff][hOff] = true;
+                    break;
+                case '#':
+                    grid[vOff][hOff] = false;
+                    break;
+                default:
+                    throw runtime_error("Invalid character in input");
+            }
+        }
+    }
+
+    return Face(offset,grid,sideLength);
+}
+
+auto parseFaces(const V<string> &map, st sideLength, const pair<st,st> &dimensions){
+    auto [xDim, yDim] = dimensions;
+
+    array<Face, 6> faces;
+    V<V<st>> layout(yDim,V<st>(xDim,0));
+
+    st idx = 1;
+    Coord offset{0,0};
+    for(; offset.y() < yDim * sideLength; offset.y() += sideLength){
+        for(offset.x() = 0; offset.x() < map[offset.y()].length(); offset.x() += sideLength){
+            if(map[offset.y()][offset.x()]!=' '){
+                layout[offset.y()/sideLength][offset.x()/sideLength] = idx;
+
+                faces[idx-1] = parseFace(map,sideLength, offset);
+
+                ++idx;
+            }
+        }
+    }
+
+    return make_tuple(faces, layout);
+}
+
+auto parseInput(V<string> &map) {
+    auto [sideLength, dimension] = getDimensions(map);
+
+    auto [faces, layout] = parseFaces(map,sideLength,dimension);
+
+    for(auto&  row : layout){
+        for (auto idx : row){
+            cout << idx;
+        }
+        cout << endl;
+    }
+
+    /*
+    for(auto &face : faces){
+        face.print();
+    }*/
+
+    return make_tuple(faces,layout);
+}
+
+FaceNeighbour buildDirectNeighbours(const LayoutGrid &layout) {
+    st numFaces = 0;
+    for(auto& row : layout){
+        for(auto id : row){
+            numFaces = max(numFaces,id);
+        }
+    }
+
+    FaceNeighbour result(numFaces);
+
+    for(i64 vPos = 0; vPos < layout.size(); ++vPos) {
+        for(i64 hPos = 0; hPos < layout[vPos].size(); ++hPos ) {
+            if(layout[vPos][hPos] == 0) {
+                // Id 0 is a placeholder for empty spaces
+                continue;
+            }
+
+            st curId = layout[vPos][hPos];
+
+            Coord current{vPos,hPos};
+            for(st dirId = 0; dirId < Direction::NUM_DIRECTIONS; ++dirId) {
+                Coord check = current + Directions[dirId];
+                if(check.x() < 0 || check.y() < 0 ){
+                    continue;
+                }
+
+                if(check.x()>=layout.size() || check.y()>=layout[vPos].size()){
+                    continue;
+                }
+
+                auto neighbourId = layout[check.x()][check.y()];
+                if(neighbourId == 0) {
+                    continue;
+                }
+
+                result[curId-1][dirId] = make_pair(neighbourId, Direction((dirId+2)%4));
+            }
+        }
+    }
+
+    return result;
+}
+
+void buildIndirectNeighbours(FaceNeighbour &neighbours) {
+    for(st faceIdx = 1; faceIdx <= neighbours.size(); ++faceIdx){
+        for ( st dirIdx = 0; dirIdx < NUM_DIRECTIONS; ++dirIdx) {
+            if (neighbours[faceIdx-1][dirIdx].first != 0){
+                continue;
+            }
+
+            auto otherDir = (dirIdx + 2) % NUM_DIRECTIONS;
+            auto neighbourId = faceIdx;
+            while (neighbours[neighbourId-1][otherDir].first != 0) {
+                neighbourId = neighbours[neighbourId-1][otherDir].first;
+            }
+
+            neighbours[faceIdx-1][dirIdx] = make_pair(neighbourId,Direction(otherDir));
+            neighbours[neighbourId-1][otherDir] = make_pair(faceIdx,Direction(dirIdx));
+        }
+    }
+}
+
 auto parseInput() {
     auto lines = IO::fromCin();
     auto mapLines = lines | ranges::views::take_while([](auto& line){return !line.empty();});
@@ -227,8 +391,18 @@ auto parseInput() {
 
     return make_tuple(map,lines[lines.size()-1]);
 }
-using Coord = transform::Coord<2>;
 
+void part1Refactored(){
+    auto [map,instructions] = getInput();
+
+    auto [faces,layout] = parseInput(map);
+
+    auto neighbours = buildDirectNeighbours(layout);
+
+    buildIndirectNeighbours(neighbours);
+
+
+}
 
 void part1(){
     auto [map,instructions] = parseInput();
@@ -755,7 +929,7 @@ void part2(){
 
 int main(int argc, char* argv[]){
   if(std::string(argv[1])=="--one"){
-    part1();
+    part1Refactored();
   } else if(std::string(argv[1])=="--two"){
     part2();
   } else {

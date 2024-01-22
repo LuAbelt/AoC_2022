@@ -1019,6 +1019,26 @@ namespace transform {
             return _coords[3];
         }
 
+        [[nodiscard]] i64 &x() {
+            return _coords[0];
+        }
+
+        [[nodiscard]] i64 &y() {
+            return _coords[1];
+        }
+
+        [[nodiscard]] i64 &z()
+        requires (Dimensions > 2)
+        {
+            return _coords[2];
+        }
+
+        [[nodiscard]] i64 &w()
+        requires (Dimensions > 3)
+        {
+            return _coords[3];
+        }
+
         i64 &operator[](st idx) {
             return _coords[idx];
         }
